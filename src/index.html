@@ -1,0 +1,1560 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Elitecart</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en" ng-app="eCommerceApp">
+<head>
+  <meta charset="UTF-8">
+  <title>ElectroMart</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular-cookies.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles */
+    html, body {
+      height: 100%;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    /* Header and Navigation */
+    header {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 10px 20px;
+      box-shadow: 0 4px 6px rgba(255,255,255,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .navbar-brand {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .navbar-menu a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .navbar-menu a.active {
+      color: #ff5722;
+      border-bottom: 2px solid #ff5722;
+      padding-bottom: 2px;
+    }
+
+    .navbar-menu a:hover {
+      color: #bbbbbb;
+    }
+
+    /* Cart Indicator */
+    .cart-indicator {
+      position: relative;
+      margin-left: 15px;
+      cursor: pointer;
+    }
+
+    .cart-indicator img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .cart-indicator .cart-count {
+      position: absolute;
+      top: -5px;
+      right: -10px;
+      background-color: #ff5722;
+      color: #ffffff;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 0.8em;
+    }
+
+    /* Search and Filters Container */
+    .search-filters-container {
+      background-color: #1e1e1e;
+      padding: 15px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(255,255,255,0.1);
+    }
+
+    /* Search Bar */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 250px;
+      margin-right: 20px;
+    }
+
+    .search-bar select, .search-bar input {
+      padding: 7px 10px;
+      border: none;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .search-bar input {
+      background-color: #333333;
+      color: #ffffff;
+      flex: 1;
+    }
+
+    .search-bar button {
+      padding: 7px 15px;
+      background-color: #ff5722;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .search-bar button:hover {
+      background-color: #e64a19;
+    }
+
+    /* Category Filters */
+    .category-filters {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .category-filters button {
+      background-color: #1e1e1e;
+      border: 2px solid #ffffff;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .category-filters button.active, .category-filters button:hover {
+      background-color: #ff5722;
+      color: #ffffff;
+      border: none;
+    }
+
+    /* Slider */
+    .slider {
+      position: relative;
+      width: 100%;
+      max-height: 400px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 300px;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slide.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Slider Navigation */
+    .slider-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+
+    .slider-nav button {
+      background-color: rgba(255,255,255,0.5);
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      color: #000000;
+      font-size: 1.2em;
+    }
+
+    .slider-nav button:hover {
+      background-color: rgba(255,255,255,0.8);
+    }
+
+    /* Category Images on Home Page */
+    .categories-home {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .category-box {
+      background-color: #1e1e1e;
+      border-radius: 17px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      margin: 10px;
+      width: 150px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .category-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.5);
+    }
+
+    .category-box img {
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 15px;
+    }
+
+    .category-box .category-name {
+      position: absolute;
+      bottom: 5px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9em;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2px 0;
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+    }
+
+    /* Additional Small Containers Below Slider */
+    .featured-products {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .featured-box {
+      background-color: #1e1e1e;
+      border-radius: 17px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      margin: 10px;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .featured-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.5);
+    }
+
+    .featured-box img {
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 15px;
+    }
+
+    .featured-box .featured-name {
+      position: absolute;
+      bottom: 5px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9em;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2px 0;
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0 20px 40px 20px;
+    }
+
+    .product-card {
+      background-color: #1e1e1e;
+      border-radius: 30px;
+      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
+      margin: 15px;
+      width: calc(25% - 30px); /* 4 items per row */
+      box-sizing: border-box;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(255,255,255,0.2);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 277px;
+      object-fit: cover;
+    }
+
+    .product-details {
+      padding: 15px;
+      text-align: center;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-details h3 {
+      margin: 10px 0;
+      font-size: 1.2em;
+      color: #ffffff;
+    }
+
+    .product-details p {
+      color: #cccccc;
+      font-size: 0.9em;
+      margin: 5px 0;
+      flex-grow: 1;
+    }
+
+    .product-details .price {
+      color: #ff5722;
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    /* Product Details Page */
+    .product-details-page {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .product-details-image {
+      width: 500px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-right: 40px;
+    }
+
+    .product-details-info {
+      max-width: 600px;
+      color: #ffffff;
+    }
+
+    .product-details-info h2 {
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    .product-details-info p {
+      color: #cccccc;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .product-details-info .price {
+      color: #ff5722;
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .product-details-info button {
+      padding: 10px 20px;
+      background-color: #ff5722;
+      border: none;
+      border-radius: 10px;
+      color: #ffffff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .product-details-info button:hover {
+      background-color: #e64a19;
+    }
+
+    /* Star Rating */
+    .star-rating {
+      direction: rtl;
+      display: inline-block;
+      padding: 20px;
+    }
+
+    .star-rating input[type="radio"] {
+      display: none;
+    }
+
+    .star-rating label {
+      font-size: 30px;
+      color: #555;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input[type="radio"]:checked ~ label {
+      color: #ff5722;
+    }
+
+    /* Comments Section */
+    .comments-section {
+      margin-top: 30px;
+    }
+
+    .comments-section h3 {
+      margin-bottom: 15px;
+      color: #ffffff;
+    }
+
+    .comments-section .comment {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .comments-section .comment .commenter {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .comments-section .comment .comment-text {
+      color: #cccccc;
+    }
+
+    .add-comment {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .add-comment textarea {
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      resize: vertical;
+      min-height: 80px;
+      background-color: #333333;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .add-comment button {
+      align-self: flex-end;
+      padding: 7px 15px;
+      background-color: #ff5722;
+      border: none;
+      border-radius: 5px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .add-comment button:hover {
+      background-color: #e64a19;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .product-card {
+        width: calc(33.333% - 30px); /* 3 items per row */
+      }
+    }
+
+    @media (max-width: 900px) {
+      .product-card {
+        width: calc(50% - 30px); /* 2 items per row */
+      }
+
+      .product-details-page {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .product-details-image {
+        margin-right: 0;
+        margin-bottom: 20px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .product-card {
+        width: calc(100% - 30px); /* 1 item per row */
+      }
+
+      .navbar-menu {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .search-filters-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .search-bar {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      .filters {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .filters select {
+        width: 80%;
+      }
+
+      .categories, .filters, .categories-home, .featured-products {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .category-box, .featured-box {
+        width: 80%;
+        height: auto;
+        padding: 20px;
+      }
+
+      .slider-nav button {
+        padding: 8px;
+        font-size: 1em;
+      }
+    }
+
+    /* Footer */
+    footer {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      text-align: center;
+      padding: 15px;
+      box-shadow: 0 -2px 4px rgba(255,255,255,0.1);
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    /* Login Form */
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: calc(100vh - 60px); /* Adjusted for footer height */
+    }
+
+    .login-form {
+      background-color: #1e1e1e;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    .login-form input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background-color: #333333;
+      color: #ffffff;
+    }
+
+    .login-form button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff5722;
+      border: none;
+      border-radius: 10px;
+      color: #ffffff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .login-form button:hover {
+      background-color: #e64a19;
+    }
+
+    /* About and Contact Pages */
+    .content-container {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .content-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    .content-container p {
+      color: #cccccc;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    /* Cart Page Styles */
+    .cart-container {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .cart-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .cart-container table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .cart-container th, .cart-container td {
+      border-bottom: 1px solid #444444;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .cart-container th {
+      background-color: #333333;
+    }
+
+    .cart-container button {
+      background-color: #ff5722;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .cart-container button:hover {
+      background-color: #e64a19;
+    }
+
+    .checkout-button {
+      background-color: #4CAF50;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: #ffffff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      float: right;
+    }
+
+    .checkout-button:hover {
+      background-color: #45a049;
+    }
+
+    .clear-both {
+      clear: both;
+    }
+    @media (max-width: 600px) {
+  .product-card {
+    width: calc(100% - 30px); /* 1 item per row */
+  }
+  .navbar-menu {
+    flex-direction: column;
+  }
+  .search-filters-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .search-bar, .category-filters {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media (max-width: 900px) {
+  .product-card {
+    width: calc(50% - 30px); /* 2 items per row */
+  }
+  .navbar-menu {
+    flex-direction: column;
+    align-items: center;
+  }
+  .category-filters {
+    justify-content: center;
+  }
+}
+
+  </style>
+</head>
+<body ng-controller="MainController">
+
+  <!-- Header and Navigation -->
+  <header>
+    <div class="navbar">
+      <a href="#!/" class="navbar-brand">ElectroMart</a>
+      <div class="navbar-menu">
+        <a href="#!/" ng-class="{'active': isActive('/') }">Home</a>
+        <a href="#!/products" ng-class="{'active': isActive('/products') }">Products</a>
+        <a href="#!/about" ng-class="{'active': isActive('/about') }">About</a>
+        <a href="#!/contact" ng-class="{'active': isActive('/contact') }">Contact</a>
+        <a href="#!/login" ng-class="{'active': isActive('/login') }">Login</a>
+        <!-- Cart Indicator -->
+        <div class="cart-indicator" ng-click="goToCart()">
+          <img src="https://via.placeholder.com/24?text=🛒" alt="Cart">
+          <span class="cart-count">{{cart.length}}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search and Filters Container -->
+  <div class="search-filters-container">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <select ng-model="searchOption">
+        <option value="All">All</option>
+        <option value="name">Name</option>
+        <option value="category">Category</option>
+      </select>
+      <input type="text" ng-model="searchQuery" placeholder="Search products..." />
+      <button ng-click="performSearch()">Search</button>
+    </div>
+    <!-- Category Filters -->
+    <div class="category-filters">
+      <button ng-class="{'active': selectedCategory === 'All'}" ng-click="filterCategory('All')">All</button>
+      <button ng-class="{'active': selectedCategory === 'Electrical & Electronics'}" ng-click="filterCategory('Electrical & Electronics')">Electrical & Electronics</button>
+      <button ng-class="{'active': selectedCategory === 'Accessories'}" ng-click="filterCategory('Accessories')">Accessories</button>
+      <button ng-class="{'active': selectedCategory === 'Clothing'}" ng-click="filterCategory('Clothing')">Clothing</button>
+      <button ng-class="{'active': selectedCategory === 'Wearables'}" ng-click="filterCategory('Wearables')">Wearables</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div style="flex: 1 0 auto;">
+    <div ng-view></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2024 ElectroMart. All rights reserved.
+  </footer>
+
+  <!-- AngularJS Application Script -->
+  <script>
+    angular.module('eCommerceApp', ['ngRoute'])
+      .config(['$routeProvider', function($routeProvider) {
+        $routeProvider
+          .when('/', {
+            templateUrl: 'home.html',
+            controller: 'HomeController'
+          })
+          .when('/products', {
+            templateUrl: 'products.html',
+            controller: 'ProductsController'
+          })
+          .when('/product/:id', {
+            templateUrl: 'product-details.html',
+            controller: 'ProductDetailsController'
+          })
+          .when('/about', {
+            templateUrl: 'about.html',
+            controller: 'AboutController'
+          })
+          .when('/contact', {
+            templateUrl: 'contact.html',
+            controller: 'ContactController'
+          })
+          .when('/login', {
+            templateUrl: 'login.html',
+            controller: 'LoginController'
+          })
+          .when('/cart', {
+            templateUrl: 'cart.html',
+            controller: 'CartController'
+          })
+          .otherwise({
+            redirectTo: '/'
+          });
+      }])
+      .service('ProductService', function() {
+        // Sample Data for Products
+        this.items = [
+          // Electrical & Electronics
+          {
+            id: 1,
+            name: 'Smart TV 55"', 
+            description: '4K Ultra HD Smart LED TV with built-in streaming apps and voice control.',
+            price: 79999, // Price in Rupees
+            category: 'Electrical & Electronics',
+            image: 'images/tv.jpg',
+            details: 'This Smart TV features a sleek design, vibrant display, and seamless connectivity with your favorite devices.',
+            ratings: [], // To store user ratings
+            comments: [] // To store user comments
+          },
+          {
+            id: 2,
+            name: 'Bluetooth Speaker',
+            description: 'Portable Wireless Speaker with deep bass and long battery life.',
+            price: 4999,
+            category: 'Electrical & Electronics',
+            image: 'images/blu.jpg',
+            details: 'Enjoy high-quality sound anywhere with this compact and durable Bluetooth speaker.',
+            ratings: [],
+            comments: []
+          },
+          {
+            id: 3,
+            name: 'Laptop Pro 15"',
+            description: 'High-performance laptop for professionals with powerful processors and ample storage.',
+            price: 129999,
+            category: 'Electrical & Electronics',
+            image: 'images/lap.jpg',
+            details: 'Perfect for multitasking and demanding applications, this laptop offers speed and reliability.',
+            ratings: [],
+            comments: []
+          },
+          // Accessories
+          {
+            id: 4,
+            name: 'Leather Wallet',
+            description: 'Genuine leather wallet with multiple compartments for cards and cash.',
+            price: 3999,
+            category: 'Accessories',
+            image: 'images/wal.jpg',
+            details: 'Keep your essentials organized in this stylish and durable leather wallet.',
+            ratings: [],
+            comments: []
+          },
+          {
+            id: 5,
+            name: 'Sunglasses',
+            description: 'Polarized sunglasses with UV protection and trendy design.',
+            price: 1999,
+            category: 'Accessories',
+            image: 'images/fast.jpg',
+            details: 'Protect your eyes in style with these sleek and functional polarized sunglasses.',
+            ratings: [],
+            comments: []
+          },
+          {
+            id: 6,
+            name: 'Smart Watch Strap',
+            description: 'Adjustable strap for smart watches made from high-quality materials.',
+            price: 1499,
+            category: 'Accessories',
+            image: 'images/strap.jpg',
+            details: 'Enhance your smart watch’s look with this comfortable and durable strap.',
+            ratings: [],
+            comments: []
+          },
+          // Clothing
+          {
+            id: 7,
+            name: 'Men\'s Casual Shirt',
+            description: 'Comfortable and stylish casual shirt suitable for all occasions.',
+            price: 2999,
+            category: 'Clothing',
+            image: 'images/shirt.jpg',
+            details: 'Made from breathable fabric, this shirt ensures both comfort and style.',
+            ratings: [],
+            comments: []
+          },
+          {
+            id: 8,
+            name: 'Women\'s Jacket',
+            description: 'Warm and trendy jacket for women with multiple pockets.',
+            price: 5999,
+            category: 'Clothing',
+            image: 'images/jac.jpg',
+            details: 'Stay cozy and fashionable with this versatile women’s jacket.',
+            ratings: [],
+            comments: []
+          },
+          {
+            id: 9,
+            name: 'Unisex Hoodie',
+            description: 'Cozy hoodie available in multiple colors and sizes.',
+            price: 2599,
+            category: 'Clothing',
+            image: 'images/hood.jpg',
+            details: 'Perfect for lounging or casual outings, this hoodie offers comfort and style.',
+            ratings: [],
+            comments: []
+          },
+          // Wearables
+          {
+            id: 10,
+            name: 'Fitness Tracker',
+            description: 'Monitor your daily activities and health metrics with this sleek tracker.',
+            price: 9999,
+            category: 'Wearables',
+            image: 'images/fit.jpg',
+            details: 'Track your steps, heart rate, and sleep patterns effortlessly.',
+            ratings: [],
+            comments: []
+          },
+          {
+            id: 11,
+            name: 'Smart Glasses',
+            description: 'Augmented reality smart glasses with hands-free controls.',
+            price: 24999,
+            category: 'Wearables',
+            image: 'images/gls.jpg',
+            details: 'Experience the future with these innovative smart glasses offering seamless AR integration.',
+            ratings: [],
+            comments: []
+          },
+          {
+            id: 12,
+            name: 'Virtual Reality Headset',
+            description: 'Immersive VR experience for gaming and more with high-resolution display.',
+            price: 19999,
+            category: 'Wearables',
+            image: 'images/vr.jpg',
+            details: 'Dive into virtual worlds with this comfortable and high-performance VR headset.',
+            ratings: [],
+            comments: []
+          }
+        ];
+      })
+      .service('CartService', function() {
+        // Initialize cart from localStorage or empty array
+        this.cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        this.addToCart = function(product) {
+          this.cart.push(product);
+          localStorage.setItem('cart', JSON.stringify(this.cart));
+        };
+
+        this.getCart = function() {
+          return this.cart;
+        };
+
+        this.removeFromCart = function(index) {
+          this.cart.splice(index, 1);
+          localStorage.setItem('cart', JSON.stringify(this.cart));
+        };
+
+        this.clearCart = function() {
+          this.cart = [];
+          localStorage.setItem('cart', JSON.stringify(this.cart));
+        };
+      })
+      .service('RatingService', function() {
+        // Initialize ratings from localStorage or empty object
+        this.ratings = JSON.parse(localStorage.getItem('ratings')) || {};
+
+        this.addRating = function(productId, rating) {
+          if (!this.ratings[productId]) {
+            this.ratings[productId] = [];
+          }
+          this.ratings[productId].push(rating);
+          localStorage.setItem('ratings', JSON.stringify(this.ratings));
+        };
+
+        this.getRatings = function(productId) {
+          return this.ratings[productId] || [];
+        };
+      })
+      .service('CommentService', function() {
+        // Initialize comments from localStorage or empty object
+        this.comments = JSON.parse(localStorage.getItem('comments')) || {};
+
+        this.addComment = function(productId, comment) {
+          if (!this.comments[productId]) {
+            this.comments[productId] = [];
+          }
+          this.comments[productId].push(comment);
+          localStorage.setItem('comments', JSON.stringify(this.comments));
+        };
+
+        this.getComments = function(productId) {
+          return this.comments[productId] || [];
+        };
+      })
+      .controller('MainController', ['$scope', '$location', '$timeout', 'ProductService', 'CartService', function($scope, $location, $timeout, ProductService, CartService) {
+        // Active Navigation Link
+        $scope.isActive = function(viewLocation) {
+          return viewLocation === $location.path();
+        };
+
+        // Expose products to the scope
+        $scope.items = ProductService.items;
+
+        // Expose cart to the scope
+        $scope.cart = CartService.getCart();
+
+        // Initialize Filters and Search
+        $scope.selectedCategory = 'All';
+        $scope.selectedPriceRange = '';
+        $scope.selectedSort = '';
+        $scope.searchOption = 'All';
+        $scope.searchQuery = '';
+
+        // Sorting Options
+        $scope.sortOption = '';
+
+        // Function to Perform Search
+        $scope.performSearch = function() {
+          $scope.updateFilteredItems();
+        };
+
+        // Function to Filter by Category
+        $scope.filterCategory = function(category) {
+          $scope.selectedCategory = category;
+          $scope.updateFilteredItems();
+        };
+
+        // Watch for changes in filters and search
+        $scope.$watchGroup(['selectedCategory', 'selectedPriceRange', 'searchQuery', 'searchOption', 'selectedSort'], function(newValues, oldValues) {
+          $scope.updateFilteredItems();
+        });
+
+        // Function to Update Filtered Items
+        $scope.updateFilteredItems = function() {
+          // Start with all items
+          let filtered = $scope.items;
+
+          // Filter by Category
+          if ($scope.selectedCategory !== 'All') {
+            filtered = filtered.filter(item => item.category === $scope.selectedCategory);
+          }
+
+          // Filter by Price Range
+          if ($scope.selectedPriceRange) {
+            let [min, max] = $scope.selectedPriceRange.split('-').map(Number);
+            if (max) {
+              filtered = filtered.filter(item => item.price >= min && item.price <= max);
+            } else {
+              // For ranges like "₹20,001 and above"
+              filtered = filtered.filter(item => item.price >= min);
+            }
+          }
+
+          // Filter by Search Query
+          if ($scope.searchQuery) {
+            let query = $scope.searchQuery.toLowerCase();
+            if ($scope.searchOption === 'All') {
+              filtered = filtered.filter(item => 
+                item.name.toLowerCase().includes(query) || 
+                item.category.toLowerCase().includes(query) || 
+                item.description.toLowerCase().includes(query)
+              );
+            } else if ($scope.searchOption === 'name') {
+              filtered = filtered.filter(item => item.name.toLowerCase().includes(query));
+            } else if ($scope.searchOption === 'category') {
+              filtered = filtered.filter(item => item.category.toLowerCase().includes(query));
+            }
+          }
+
+          // Apply Sorting
+          if ($scope.selectedSort === 'priceLowHigh') {
+            filtered = filtered.sort((a, b) => a.price - b.price);
+          } else if ($scope.selectedSort === 'priceHighLow') {
+            filtered = filtered.sort((a, b) => b.price - a.price);
+          } else if ($scope.selectedSort === 'nameAtoZ') {
+            filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
+          } else if ($scope.selectedSort === 'nameZtoA') {
+            filtered = filtered.sort((a, b) => b.name.localeCompare(a.name));
+          }
+
+          $scope.filteredItems = filtered;
+        };
+
+        // Initialize filteredItems
+        $scope.filteredItems = $scope.items;
+
+        // Slider Functionality
+        $scope.sliderImages = [
+          'images/adv1.jpg',
+          'images/adv2.jpg',
+          'images/adv3.jpg'
+        ];
+
+        $scope.currentSlide = 0;
+
+        $scope.nextSlide = function() {
+          $scope.currentSlide = ($scope.currentSlide + 1) % $scope.sliderImages.length;
+        };
+
+        $scope.prevSlide = function() {
+          $scope.currentSlide = ($scope.currentSlide - 1 + $scope.sliderImages.length) % $scope.sliderImages.length;
+        };
+
+        // Auto-slide every 5 seconds
+        $timeout(function slideTimer() {
+          $scope.nextSlide();
+          $timeout(slideTimer, 5000);
+        }, 5000);
+
+        // Function to navigate to Cart
+        $scope.goToCart = function() {
+          $location.path('/cart');
+        };
+      }])
+      .controller('HomeController', ['$scope', '$location', function($scope, $location) {
+        // Category Images
+        $scope.categoriesHome = [
+          {
+            name: 'Electrical & Electronics',
+            image: 'images/minad2.jpg'
+          },
+          {
+            name: 'Accessories',
+            image: 'images/minad8.jpg'
+          },
+          {
+            name: 'Clothing',
+            image: 'images/minad3.jpg'
+          },
+          {
+            name: 'Wearables',
+            image: 'images/minad6.jpg'
+          }
+        ];
+
+        // Featured Products (Small Containers Below Slider)
+        $scope.featuredProducts = [
+          {
+            name: 'Wireless Earbuds',
+            image: 'images/minad5.jpg'
+          },
+          {
+            name: 'Gaming Mouse',
+            image: 'images/minad1.jpg'
+          },
+          {
+            name: 'Smartphone',
+            image: 'images/minad4.jpg'
+          },
+          {
+            name: 'Digital Camera',
+            image: 'images/minad7.jpg'
+          }
+        ];
+
+        // Navigate to Products based on Category
+        $scope.goToCategory = function(category) {
+          // Navigate to products page and filter by category
+          $location.path('/products');
+        };
+
+        // Navigate to Featured Product (Currently non-functional, can be enhanced)
+        $scope.goToFeatured = function(featured) {
+          alert('Navigate to ' + featured.name + ' details.');
+        };
+      }])
+      .controller('ProductsController', ['$scope', '$location', function($scope, $location) {
+        // Function to navigate to product details
+        $scope.viewDetails = function(item) {
+          $location.path('/product/' + item.id);
+        };
+      }])
+      .controller('ProductDetailsController', ['$scope', '$routeParams', 'ProductService', 'CartService', 'RatingService', 'CommentService', function($scope, $routeParams, ProductService, CartService, RatingService, CommentService) {
+        const productId = parseInt($routeParams.id);
+        // Find the product by id
+        $scope.product = ProductService.items.find(item => item.id === productId);
+
+        if (!$scope.product) {
+          $scope.error = "Product not found.";
+        }
+
+        // Add to Cart Functionality
+        $scope.addToCart = function(product) {
+          CartService.addToCart(product);
+          alert(product.name + " has been added to your cart.");
+        };
+
+        // Rating Functionality
+        angular.module('eCommerceApp', ['ngRoute', 'ngCookies'])
+      .config(['$routeProvider', function($routeProvider) {
+        $routeProvider
+          .when('/', { templateUrl: 'home.html', controller: 'HomeController' })
+          .when('/login', { templateUrl: 'login.html', controller: 'LoginController' })
+          .when('/product/:id', { templateUrl: 'product-details.html', controller: 'ProductDetailsController' })
+          .otherwise({ redirectTo: '/' });
+      }])
+      .service('AuthService', ['$http', '$cookies', function($http, $cookies) {
+        const apiUrl = 'http://localhost:5000/api/users';
+        this.login = function(credentials) {
+          return $http.post(`${apiUrl}/login`, credentials).then((response) => {
+            $cookies.put('token', response.data.token);
+            return response;
+          });
+        };
+      }])
+      .service('ProductService', ['$http', '$cookies', function($http, $cookies) {
+        const apiUrl = 'http://localhost:5000/api/products';
+
+        this.addComment = function(productId, comment) {
+          const token = $cookies.get('token');
+          return $http.post(`${apiUrl}/${productId}/comment`, { text: comment }, {
+            headers: { Authorization: token }
+          });
+        };
+
+        this.addRating = function(productId, rating) {
+          const token = $cookies.get('token');
+          return $http.post(`${apiUrl}/${productId}/rating`, { rating }, {
+            headers: { Authorization: token }
+          });
+        };
+      }])
+      .controller('LoginController', ['$scope', 'AuthService', '$location', function($scope, AuthService, $location) {
+        $scope.user = {};
+        $scope.login = function() {
+          AuthService.login($scope.user).then(() => {
+            alert('Login successful');
+            $location.path('/');
+          }).catch(() => alert('Invalid credentials'));
+        };
+      }])
+      .controller('ProductDetailsController', ['$scope', '$routeParams', 'ProductService', function($scope, $routeParams, ProductService) {
+        const productId = $routeParams.id;
+        $scope.currentRating = 0;
+        $scope.newComment = '';
+
+        $scope.submitRating = function() {
+          if ($scope.currentRating > 0) {
+            ProductService.addRating(productId, $scope.currentRating).then(() => {
+              alert('Rating submitted successfully');
+            }).catch(() => alert('Failed to submit rating'));
+          }
+        };
+
+        $scope.submitComment = function() {
+          if ($scope.newComment) {
+            ProductService.addComment(productId, $scope.newComment).then(() => {
+              alert('Comment submitted successfully');
+              $scope.newComment = '';
+            }).catch(() => alert('Failed to submit comment'));
+          }
+        };
+      }]);
+        // Comments Functionality
+        $scope.newComment = '';
+
+        $scope.submitComment = function() {
+  if ($scope.newComment.trim() !== '') {
+    CommentService.addComment(productId, $scope.newComment.trim());
+    // Fetch updated comments and refresh the scope
+    $scope.comments = CommentService.getComments(productId);
+    $scope.newComment = '';
+    alert('Thank you for your comment!');
+  } else {
+    alert('Please enter a comment.');
+  }
+};
+
+        // Initialize Comments
+        $scope.comments = CommentService.getComments(productId);
+      }])
+      .controller('AboutController', ['$scope', function($scope) {
+        // About Page Content is handled in the template
+      }])
+      .controller('ContactController', ['$scope', function($scope) {
+        // Contact Page Content is handled in the template
+      }])
+     /* .controller('LoginController', ['$scope', function($scope) {
+        $scope.user = {};
+
+        $scope.login = function() {
+          // Dummy login functionality
+          alert('Login functionality is under development. Please try again later.');
+      };
+      }]) */
+      .controller('CartController', ['$scope', 'CartService', function($scope, CartService) {
+        $scope.cartItems = CartService.getCart();
+
+        $scope.totalPrice = function() {
+          return $scope.cartItems.reduce(function(sum, item) {
+            return sum + item.price;
+          }, 0);
+        };
+
+        $scope.removeFromCart = function(index) {
+          CartService.removeFromCart(index);
+          $scope.cartItems = CartService.getCart();
+        };
+
+        $scope.proceedToCheckout = function() {
+          if ($scope.cartItems.length > 0) {
+            alert('Proceeding to checkout...');
+            CartService.clearCart();
+            $scope.cartItems = CartService.getCart();
+          } else {
+            alert('Your cart is empty.');
+          }
+        };
+      }])
+      .directive('slider', function() {
+        return {
+          restrict: 'E',
+          template: `
+            <div class="slider">
+              <div class="slide" ng-repeat="image in sliderImages" ng-style="{'background-image': 'url(' + image + ')'}" ng-class="{'active': $index === currentSlide}">
+              </div>
+              <div class="slider-nav">
+                <button ng-click="prevSlide()">&#10094;</button>
+                <button ng-click="nextSlide()">&#10095;</button>
+              </div>
+            </div>
+          `
+        };
+      });
+  </script>
+
+  <!-- Templates -->
+
+  <!-- Home Page Template -->
+  <script type="text/ng-template" id="home.html">
+    <slider></slider>
+    <div class="categories-home">
+      <div class="category-box" ng-repeat="category in categoriesHome" ng-click="goToCategory(category.name)">
+        <img ng-src="{{category.image}}" alt="{{category.name}}">
+        <div class="category-name">{{category.name}}</div>
+      </div>
+    </div>
+    <div class="featured-products">
+      <div class="featured-box" ng-repeat="featured in featuredProducts" ng-click="goToFeatured(featured)">
+        <img ng-src="{{featured.image}}" alt="{{featured.name}}">
+        <div class="featured-name">{{featured.name}}</div>
+      </div>
+    </div>
+  </script>
+
+  <!-- Products Page Template -->
+  <script type="text/ng-template" id="products.html">
+    <!-- Product Grid -->
+    <div class="product-grid">
+      <div class="product-card" ng-repeat="item in filteredItems" ng-click="viewDetails(item)">
+        <img ng-src="{{item.image}}" alt="{{item.name}}" class="product-image">
+        <div class="product-details">
+          <h3>{{item.name}}</h3>
+          <p>{{item.description}}</p>
+          <p class="price">₹{{item.price | number:0}}</p>
+        </div>
+      </div>
+      <div ng-if="filteredItems.length === 0" style="text-align:center; width: 100%; color: #777;">
+        <p>No products found.</p>
+      </div>
+    </div>
+  </script>
+
+  <!-- Product Details Page Template -->
+  <script type="text/ng-template" id="product-details.html">
+    <div class="product-details-page" ng-if="product">
+      <img ng-src="{{product.image}}" alt="{{product.name}}" class="product-details-image">
+      <div class="product-details-info">
+        <h2>{{product.name}}</h2>
+        <p class="price">₹{{product.price | number:0}}</p>
+        <p>{{product.description}}</p>
+        <p>{{product.details}}</p>
+        <button ng-click="addToCart(product)">Add to Cart</button>
+
+        <!-- Star Rating Section -->
+        <div class="comments-section">
+          <h3>Rate this Product:</h3>
+          <div class="star-rating">
+            <input type="radio" id="5-stars" name="rating" ng-model="currentRating" value="5"/>
+            <label for="5-stars">&#9733;</label>
+            <input type="radio" id="4-stars" name="rating" ng-model="currentRating" value="4"/>
+            <label for="4-stars">&#9733;</label>
+            <input type="radio" id="3-stars" name="rating" ng-model="currentRating" value="3"/>
+            <label for="3-stars">&#9733;</label>
+            <input type="radio" id="2-stars" name="rating" ng-model="currentRating" value="2"/>
+            <label for="2-stars">&#9733;</label>
+            <input type="radio" id="1-star" name="rating" ng-model="currentRating" value="1"/>
+            <label for="1-star">&#9733;</label>
+          </div>
+          <button ng-click="submitRating()">Submit Rating</button>
+          <p>Average Rating: {{averageRating}} / 5 ({{ratingCount}} ratings)</p>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+          <h3>Comments:</h3>
+          <div ng-repeat="comment in comments" class="comment">
+            <div class="commenter">Anonymous:</div>
+            <div class="comment-text">{{comment}}</div>
+          </div>
+
+          <div class="add-comment">
+            <textarea ng-model="newComment" placeholder="Write your comment here..."></textarea>
+            <button ng-click="submitComment()">Add Comment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="product-details-page" ng-if="error">
+      <h2>{{error}}</h2>
+    </div>
+  </script>
+
+  <!-- Cart Page Template -->
+  <script type="text/ng-template" id="cart.html">
+    <div class="cart-container">
+      <h2>Your Cart</h2>
+      <div ng-if="cartItems.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in cartItems">
+              <td>{{item.name}}</td>
+              <td>₹{{item.price | number:0}}</td>
+              <td>
+                <button ng-click="removeFromCart($index)">Remove</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Total: ₹{{totalPrice() | number:0}}</h3>
+        <button class="checkout-button" ng-click="proceedToCheckout()">Proceed to Checkout</button>
+        <div class="clear-both"></div>
+      </div>
+      <div ng-if="cartItems.length === 0" style="text-align:center; color: #777;">
+        <p>Your cart is empty.</p>
+      </div>
+    </div>
+  </script>
+
+  <!-- About Page Template -->
+  <script type="text/ng-template" id="about.html">
+    <div class="content-container">
+      <h2>About ElectroMart</h2>
+      <p>Welcome to ElectroMart, your trusted source for the latest and greatest in electrical and electronics products. We are committed to providing our customers with high-quality products, exceptional customer service, and unbeatable prices.</p>
+      <p>Founded in 2024, ElectroMart has grown into a leading online retailer, offering a wide range of products from top brands around the world. Our mission is to make technology accessible and affordable for everyone.</p>
+      <p>At ElectroMart, we believe in innovation, integrity, and excellence. Our team is dedicated to ensuring that your shopping experience is seamless, secure, and satisfying.</p>
+      <p><strong>Know more about us in contact page ...</strong></p>
+      <p><strong>Team Members: <br>
+        Balajee S <br>
+        Harish Raghavendra S <br>
+        Balaharish Alais Yogesh 
+      </strong></p>
+      
+    </div>
+  </script>
+
+  <!-- Contact Page Template -->
+  <script type="text/ng-template" id="contact.html">
+    <div class="content-container">
+      <h2>Contact Us</h2>
+      <p>If you have any questions, comments, or concerns, feel free to reach out to us through any of the following methods:</p>
+      <p><strong>Address:</strong> Kamaraj college of engineering and technology,vellakulam,madurai,near virudhunagar</p>
+      <p><strong>Team Members: <br>
+        Balajee S <br>
+        Harish Raghavendra S <br>
+        Balaharish Alais Yogesh 
+      </strong></p>
+      <p><strong>Phone:</strong> +91 8668079616</p>
+      <p><strong>Email:</strong> balajee162004@gmail.com</p>
+      <p>Our customer service team is available Monday through Friday, 9 AM to 5 PM IST.</p>
+    </div>
+  </script>
+
+  <!-- Login Page Template -->
+  <script type="text/ng-template" id="login.html" >
+    <div class="login-container">
+      <form class="login-form" ng-submit="login()" action="home.html">
+        <h2>Login</h2>
+        <input type="email" ng-model="user.email" placeholder="Email" required />
+        <input type="password" ng-model="user.password" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/controllers.js"></script>
+    <script src="scripts/services.js"></script>
+
+  </script>
+
+</body>
+</html>
+
